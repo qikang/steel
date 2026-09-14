@@ -1,0 +1,6 @@
+
+
+kubeadm config images pull --config=./ipv4/kubeadm.init.onlyipv4.yaml
+
+kubeadm init --config=./ipv4/kubeadm.init.onlyipv4.yaml --ignore-preflight-errors=crictl --upload-certs --dry-run
+

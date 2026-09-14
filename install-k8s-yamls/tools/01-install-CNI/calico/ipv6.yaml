@@ -1,0 +1,14 @@
+apiVersion: operator.tigera.io/v1
+kind: Installation
+metadata:
+  name: default
+spec:
+  calicoNetwork:
+     # Note: The ipPools section cannot be modified post-install.
+    ipPools:
+      - blockSize: 122
+        cidr: 2001:db8:1234:0::/56
+        encapsulation: VXLAN
+        natOutgoing: Enabled
+        nodeSelector: all()
+  registry: registry.local:5000/

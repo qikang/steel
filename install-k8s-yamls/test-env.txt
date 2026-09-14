@@ -1,0 +1,37 @@
+data_root=/data/install-k8s
+
+k8s_master1_ip=192.168.170.48
+k8s_hosts_alias='192.168.170.48 master1\n192.168.170.49 master2\n192.168.170.47 master3\n192.168.170.22 node1\n192.168.170.42 node2\n192.168.170.1 ip-192-168-1-1'
+k8s_all_ip="192.168.170.48 192.168.170.49 192.168.170.47 192.168.170.22 192.168.170.42 192.168.170.1"
+k8s_all_hostname="master1 master2 master3 node1 node2 ip-192-168-1-1"
+
+k8s_network_stack=ipv4
+pod_network_cidr=10.244.0.0/16
+service_cidr=10.96.0.0/12
+dns_domain=cluster.local
+
+traefikServer=master1
+traefikServer_ip=192.168.170.48
+
+nfsServer=master2
+nfsServer_ip=192.168.170.49
+
+timeServer=master3
+timeServer_ip=192.168.170.47
+
+apiserverLB_hostName=master3
+apiserverLB_alias=apiserver.cluster.local
+apiserverLB_ip=192.168.170.47
+
+registryServer_hostName=master2
+registryServer_alias=registry.local
+registryServer_ip=192.168.170.49
+
+os_arch=amd64
+os_arch=arm64
+
+master_node_number=3
+
+noapiserverips=192.168.170.48 192.168.170.49
+
+

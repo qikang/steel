@@ -1,0 +1,16 @@
+[Unit]
+Description=registry - docker registry
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5
+PIDFile=/var/run/registry.pid
+ExecStart=/usr/local/bin/registry serve /data/registry/config.yaml
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+
+[Install]
+WantedBy=multi-user.target

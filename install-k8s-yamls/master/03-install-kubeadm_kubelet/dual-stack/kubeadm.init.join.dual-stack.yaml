@@ -1,0 +1,13 @@
+apiVersion: kubeadm.k8s.io/v1beta3
+caCertPath: /etc/kubernetes/pki/ca.crt
+discovery:
+  bootstrapToken:
+    apiServerEndpoint: apiserver.cluster.local:6443
+    token: at3ydj.vry17m35c1j73djf
+    caCertHashes:
+    - sha256:186d1dcab2d75d256404f6ca27e1411c46037447a6760a1a4eff9d157d752db2
+kind: JoinConfiguration
+nodeRegistration:
+  imagePullPolicy: "IfNotPresent"
+  kubeletExtraArgs:
+    node-ip: fd20:d1a9:3c86:8111:12:0:1:10,192.168.170.130

@@ -1,0 +1,57 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app: debug-tools
+  name: debug-tools
+spec:
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: debug-tools
+  template:
+    metadata:
+      labels:
+        app: debug-tools
+    spec:
+      containers:
+      - name: debug-tools
+        command: ["/bin/sh"]
+        args: ["-c", "while true; do sleep 36000;done"]
+        image: registry.local:5000/znlk-edge/debug-network-tools:master-6831d4c2a304
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - mountPath: /etc/localtime
+          name: date-config
+        - mountPath: /data
+          name: debug-tools
+          subPath: backup
+      nodeSelector:
+        kubernetes.io/os: linux
+      tolerations:
+      - operator: Exists
+      volumes:
+      - hostPath:
+          path: /etc/localtime
+        name: date-config
+      - name: debug-tools
+        persistentVolumeClaim:
+          claimName: debug-tools
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: debug-tools
+  name: debug-tools
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: nfs

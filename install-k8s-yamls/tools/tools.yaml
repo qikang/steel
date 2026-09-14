@@ -1,0 +1,58 @@
+
+- name: copy tools to all masters node.
+  hosts: masters
+  copy:
+    src: install-k8s-yamls/tools
+    dest: "{{ data_root }}/tools"
+
+# --- install CNI ---
+- name: install k8s CNI on the apiserver node.
+  hosts: {{ apiserverLB.hostName }}
+  shell:
+    cmd: /bin/bash install-cni.sh
+    chdir: "{{ data_root }}/tools/01-install-CNI"
+    bash: /bin/bash
+
+# ---- helm ----
+- name: install helm to all master node.
+  hosts: masters
+  shell:
+    cmd: /bin/bash install-helm.sh
+    chdir: "{{ data_root }}/tools/02-helm"
+    bash: /bin/bash
+
+# --- kubernetes-dashboard ---
+- name: install kubernetes-dashboard on the apiserver node.
+  hosts: masters
+  shell:
+    cmd: /bin/bash install-dashboard.sh
+    chdir: "{{ data_root }}/tools/03-kubernetes-dashboard"
+    bash: /bin/bash
+  execution_mode: serial
+
+# --- traefik ---
+- name: install 04-traefik on the apiserver node.
+  hosts: {{ apiserverLB.hostName }}
+  shell:
+    cmd: /bin/bash install-traefik.v3.0.2.sh
+    chdir: "{{ data_root }}/tools/04-traefik"
+    bash: /bin/bash
+
+# --- nfs sc ---
+- name: install nfs sc on the apiserver node.
+  hosts: {{ nfsServer }}
+  shell:
+    cmd: /bin/bash install-nfs.sc.sh
+    chdir: "{{ data_root }}/tools/05-nfs-sc"
+    bash: /bin/bash
+
+# --- debug tools ---
+- name: install debug-tools on the apiserver node.
+  hosts: {{ apiserverLB.hostName }}
+  shell:
+    cmd: /bin/bash install-debug-tools.sh
+    chdir: "{{ data_root }}/tools/06-debug"
+    bash: /bin/bash
+
+
+

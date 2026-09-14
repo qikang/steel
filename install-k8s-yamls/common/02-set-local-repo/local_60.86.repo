@@ -1,0 +1,6 @@
+[cdrom]
+name=cdrom
+baseurl=http://172.20.60.86:5001/openEuler-24.03-LTS-SP2-everything-x86_64-dvd/
+enable=1
+gpgcheck=0
+

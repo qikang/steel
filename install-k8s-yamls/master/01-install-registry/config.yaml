@@ -1,0 +1,12 @@
+version: 0.1
+loglevel: error
+http:
+  addr: :5000
+  headers:
+    Access-Control-Allow-Origin: ['*']
+storage:
+  delete:
+    enabled: true
+  filesystem:
+    rootdirectory: /data/registry/images
+    maxthreads: 500

@@ -1,0 +1,51 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app: nginx-tools
+  name: nginx-tools
+spec:
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: nginx-tools
+  template:
+    metadata:
+      labels:
+        app: nginx-tools
+    spec:
+      containers:
+      - name: nginx-tools
+        image: registry.local:5000/nginx/nginx:1.19.9-alpine
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - mountPath: /etc/localtime
+          name: date-config
+      nodeSelector:
+        kubernetes.io/os: linux
+      tolerations:
+      - operator: Exists
+      volumes:
+      - hostPath:
+          path: /etc/localtime
+        name: date-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-tools
+  labels:
+    app: nginx-tools
+spec:
+  type: NodePort
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  selector:
+    app: nginx-tools
+    

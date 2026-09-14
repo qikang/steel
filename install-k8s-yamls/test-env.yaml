@@ -1,0 +1,38 @@
+- name: all node env
+  hosts: allnode
+  shell:
+    cmd: env
+    bash: /bin/bash
+
+# - name: masters env
+#   hosts: masters
+#   shell:
+#     cmd: env;echo {{ hostname }}
+#     bash: /bin/bash
+
+# - name: workers env
+#   hosts: workers
+#   shell:
+#     cmd: env
+#     bash: /bin/bash
+
+# - name: nfsServer env
+#   hosts: {{ nfsServer }}
+#   shell:
+#     cmd: env
+#     bash: /bin/bash
+
+# - name: env timeServer
+#   hosts: {{ timeServer }}
+#   shell:
+#     cmd: env
+#     bash: /bin/bash
+
+# - name: echo dns_domain
+#   hosts: {{ apiserverLB.hostName }}
+#   shell:
+#     cmd: echo "{{ dns_domain }}"
+#     bash: /bin/bash
+
+
+

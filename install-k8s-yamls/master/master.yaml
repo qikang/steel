@@ -1,0 +1,7 @@
+runlist:
+  - 01-install-registry/install-registry.yaml
+  - 02-install-containerd/install-containerd.yaml
+  - 03-install-kubeadm_kubelet/install-kubelet.yaml
+
+
+

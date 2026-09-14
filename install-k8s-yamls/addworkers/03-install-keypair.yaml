@@ -1,0 +1,40 @@
+
+- name: copy 03-set-ssh-keypair
+  hosts: addworkers
+  copy:
+    src: install-k8s-yamls/common/03-set-ssh-keypair
+    dest: "{{ data_root }}/common/03-set-ssh-keypair"
+
+- name: create home in .ssh
+  hosts: addworkers
+  shell:
+    cmd: mkdir -p /root/.ssh; chmod 700 /root/.ssh
+    bash: /bin/bash
+
+- name: copy all hosts id_rsa
+  hosts: addworkers
+  copy:
+    src: install-k8s-yamls/common/03-set-ssh-keypair/id_rsa
+    dest: /root/.ssh/id_rsa
+    mode: "0400"
+
+- name: copy all hosts keypub
+  hosts: addworkers
+  copy:
+    src: install-k8s-yamls/common/03-set-ssh-keypair/id_rsa.pub
+    dest: /root/.ssh/id_rsa.pub
+    mode: "0644"
+
+- name: set all hosts authkey
+  hosts: addworkers
+  shell:
+    cmd: cat id_rsa.pub >> ~/.ssh/authorized_keys; chmod 600 ~/.ssh/authorized_keys
+    chdir: "{{ data_root }}/common/03-set-ssh-keypair"
+    bash: /bin/bash
+
+- name: set ssh config file
+  hosts: addworkers
+  shell:
+    cmd: /bin/bash set-ssh-config.sh
+    chdir: "{{ data_root }}/common/03-set-ssh-keypair"
+    bash: /bin/bash

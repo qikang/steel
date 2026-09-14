@@ -1,0 +1,12 @@
+- name: copy 01-install-registry
+  hosts: {{ registryServer.hostName }}
+  copy:
+    src: install-k8s-yamls/master/01-install-registry
+    dest: "{{ data_root }}/master/01-install-registry"
+
+- name: install registry
+  hosts: {{ registryServer.hostName }}
+  shell:
+    cmd: /bin/bash install_registry.sh
+    chdir: "{{ data_root }}/master/01-install-registry"
+    bash: /bin/bash

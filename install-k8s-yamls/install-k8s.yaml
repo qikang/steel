@@ -1,0 +1,127 @@
+
+# 一、hosts字段定义了master组和workers组。
+# 依据hosts字段内信息，需要以下变量注入到远程shell内，多个主机信息对应到多个变量：
+#   1. k8s_master1_ip="192.168.170.48"，192.168.170.48 是用户自定义的IP地址。
+#   2. 依据hosts字段，添加k8s_hosts_alias="192.168.170.48 master1\n 192.168.170.49 master2\n 192.168.170.47 master3\n 192.168.170.22 node1\n 192.168.170.42 node2\n 192.168.170.1 ip-192-168-1-1\n "
+#   3. 依据hosts字段，添加k8s_all_ip="192.168.170.48 192.168.170.49 192.168.170.47 192.168.170.22 192.168.170.42 192.168.170.1"，包含所有masters和workers节点的IP地址。
+#   4. 依据hosts字段，添加k8s_all_hostname="master1 master2 master3 node1 node2 ip-192-168-1-1"，包含所有masters和workers节点的主机名。
+hosts:
+  masters:
+    k8s_master1:
+      hostname: master1
+      ip: 192.168.170.48
+      user: root
+      password: your_password
+      plugin:
+        # install treafik
+        # 依据字段traefikServer所在主机信息，生成内置变量traefikServer=master1
+        # 依据字段traefikServer所在主机信息，生成内置变量traefikServer_ip=192.168.170.48
+        traefikServer: true
+    k8s_master2:
+      hostname: master2
+      ip: 192.168.170.49
+      user: root
+      password: your_password
+      plugin:
+        # registry server
+        # 依据字段registryServer所在主机信息，生成内置变量registryServer_hostName=master2
+        # 依据字段registryServer所在主机信息，生成内置变量registryServer_ip=192.168.170.49
+        # 依据字段registryServer所在主机信息，生成内置变量registryServer_alias=registry.local
+        registryServer:
+          alias: registry.local
+        # nfs server
+        # 依据字段nfsServer所在的主机信息，生成内置变量nfsServer_ip=192.168.170.49
+        # 依据字段nfsServer所在的主机信息，生成内置变量nfsServer=master2
+        nfsServer: true
+    k8s_master3:
+      hostname: master3
+      ip: 192.168.170.47
+      user: root
+      password: your_password
+      plugin:
+        # apiserver lb地址，第一个初始化的master节点
+        # 依据字段apiserverLB所在主机信息，生成内置变量apiserverLB_hostName=master2
+        # 依据字段apiserverLB所在主机信息，生成内置变量apiserverLB_ip=192.168.170.47
+        # 依据字段apiserverLB所在主机信息，生成内置变量apiserverLB_alias=apiserver.cluster.local
+        apiserverLB:
+          alias: apiserver.cluster.local
+        # set chrony server.
+        # 依据字段timeServer所在的主机信息，生成内置变量timeServer_ip=192.168.170.47
+        # 依据字段timeServer所在的主机信息，生成内置变量timeServer=master3
+        timeServer: true
+  workers: {}
+  # workers:
+  #   k8s_worker1:
+  #     hostname: node1
+  #     ip: 192.168.170.22
+  #     user: root
+  #     password: your_password
+  #   k8s_worker2:
+  #     hostname: node2
+  #     ip: 192.168.170.42
+  #     user: root
+  #     password: your_password
+  #   k8s_worker3:
+  #     hostname: ip-192-168-1-1
+  #     ip: 192.168.170.1
+  #     user: root
+  #     password: your_password
+  addworkers: {}
+  # addworkers:
+  #   k8s_worker1:
+  #     hostname: node1
+  #     ip: 192.168.170.22
+  #     user: root
+  #     password: your_password
+  #   k8s_worker2:
+  #     hostname: node2
+  #     ip: 192.168.170.42
+  #     user: root
+  #     password: your_password
+  #   k8s_worker3:
+  #     hostname: ip-192-168-1-1
+  #     ip: 192.168.170.1
+  #     user: root
+  #     password: your_password
+
+# 执行yaml文件时，allnode组包含masters和workers两个子组
+# allnode是一个内置组
+# allnode:
+#   - masters
+#   - workers
+
+# 执行yaml文件时，addworkers是一个独立的组。专门为k8s集群安装完成后，再添加新节点时使用。
+
+# vars 自定义环境变量定义和使用规则
+# 1. yaml文件中变量使用示例
+#   1. {{ data_root }} = "/data/install-k8s"
+#   2. {{ registryServer.hostName }} = "master2"
+# 2. 远程shell执行脚本时，脚本内使用变量示例 
+#   1. $data_root, data_root="/data/install-k8s"
+#   2. $registryServer_hostName，registryServer_hostName = "master2"
+vars:
+  pod_network_cidr: 10.244.0.0/16
+  service_cidr: 10.96.0.0/12
+  dns_domain: cluster.local
+  data_root: /data/install-k8s-remoteDirectory
+
+  # 设置网络堆栈协议
+  # ipv4 , ipv6 , dual-stack
+  k8s_network_stack: ipv4
+
+# os_arch 给shell执行脚本时,内置的环境变量。远程服务器执行uname -m,如果x86_64,os_arch=amd64,如果aarch64,os_arch=arm64。以远程服务器真实的cpu架构为准,取值情况如下:
+# os_arch="arm64"
+# os_arch="amd64"
+
+# master_node_number 给shell执行脚本时,内置的环境变量。steel工具只支持1、3、5个master节点，如果不是直接提示退出，如果是，则把masters组内节点的数量复制给 master_node_number。
+
+# runlist 是实际顺序执行yaml文件清单。
+runlist:
+  - test-env.yaml
+  - common/os-init.yaml
+  - master/master.yaml
+  - tools/tools.yaml
+
+
+
+

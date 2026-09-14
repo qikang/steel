@@ -1,0 +1,43 @@
+- name: copy 03-install-kubeadm_kubelet
+  hosts: allnode
+  copy:
+    src: install-k8s-yamls/master/03-install-kubeadm_kubelet
+    dest: "{{ data_root }}/master/03-install-kubeadm_kubelet"
+
+- name: install kubelet kubeadm kubectl
+  hosts: allnode
+  shell:
+    cmd: /bin/bash install-kubelet.sh
+    chdir: "{{ data_root }}/master/03-install-kubeadm_kubelet"
+    bash: /bin/bash
+
+- name: init apiserver node
+  hosts: {{ apiserverLB.hostName }}
+  shell:
+    cmd: /bin/bash init-master.sh
+    chdir: "{{ data_root }}/master/03-install-kubeadm_kubelet"
+    bash: /bin/bash
+
+- name: other masters join k8s cluster
+  hosts: masters
+  shell:
+    cmd: /bin/bash join-k8s-on-the-master1.sh control-plane
+    chdir: "{{ data_root }}/master/03-install-kubeadm_kubelet"
+    bash: /bin/bash
+  execution_mode: serial
+
+- name: other workers join k8s cluster
+  hosts: workers
+  shell:
+    cmd: /bin/bash join-k8s-on-the-master1.sh worker
+    chdir: "{{ data_root }}/master/03-install-kubeadm_kubelet"
+    bash: /bin/bash
+  execution_mode: serial
+
+- name: untaint control_plane
+  hosts: {{ apiserverLB.hostName }}
+  shell:
+    cmd: /bin/bash untaint_control_plane.sh
+    chdir: "{{ data_root }}/master/03-install-kubeadm_kubelet"
+    bash: /bin/bash
+

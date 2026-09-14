@@ -1,0 +1,54 @@
+
+hosts:
+  masters:
+    k8s_master1:
+      hostname: ip-192-168-170-48
+      ip: 192.168.170.48
+      user: root
+      password: your_password
+      port: 22
+      plugin:
+        traefikServer: true
+    k8s_master2:
+      hostname: ip-192-168-170-49
+      ip: 192.168.170.49
+      user: root
+      password: your_password
+      port: 22
+      plugin:
+        registryServer:
+          alias: registry.local
+        nfsServer: true
+    k8s_master3:
+      hostname: ip-192-168-170-47
+      ip: 192.168.170.47
+      user: root
+      password: your_password
+      port: 22
+      plugin:
+        apiserverLB:
+          alias: apiserver.cluster.local
+        timeServer: true
+  workers: {}
+  # workers:
+  #   k8s_worker1:
+  #     hostname: worker1
+  #     ip: 172.20.60.130
+  #     user: root
+  #     password: your_password
+vars:
+  pod_network_cidr: 10.244.0.0/16
+  service_cidr: 10.96.0.0/12
+  dns_domain: cluster.local
+  data_root: /data/install-k8s-remoteDirectory
+  k8s_network_stack: ipv4
+
+runlist:
+  - test-env.yaml
+  - common/os-init.yaml
+  - master/master.yaml
+  - tools/tools.yaml
+
+
+
+

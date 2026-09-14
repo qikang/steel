@@ -1,0 +1,6 @@
+
+注意确认 cidr 和 service 网段
+
+# kubectl create -f tigera-operator.yaml
+
+# kubectl create -f ipv4.yaml

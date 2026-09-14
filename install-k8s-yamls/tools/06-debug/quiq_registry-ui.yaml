@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: registry-ui
+  labels:
+    app: registry-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: registry-ui
+  template:
+    metadata:
+      labels:
+        app: registry-ui
+    spec:
+      hostAliases:
+      - ip: "172.20.60.58"
+        hostnames:
+        - "registry.local"
+      containers:
+        - name: registry-ui
+          image: registry.local:5000/quiq/registry-ui:0.10.4
+          ports:
+            - containerPort: 8000
+          env:
+            - name: REGISTRY_INSECURE
+              value: "true"
+            - name: REGISTRY_URL
+              value: "registry.local:5000"
+            - name: REGISTRY_HOSTNAME
+              value: "registry.local:5000"
+      tolerations:
+      - operator: Exists
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: registry-ui
+spec:
+  type: NodePort
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+      nodePort: 30500
+  selector:
+    app: registry-ui
+

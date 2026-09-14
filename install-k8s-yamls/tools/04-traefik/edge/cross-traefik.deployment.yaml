@@ -1,0 +1,122 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "3"
+    meta.helm.sh/release-name: cross-traefik
+    meta.helm.sh/release-namespace: sn01
+  generation: 4
+  labels:
+    app.kubernetes.io/instance: cross-traefik-sn01
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: traefik
+    helm.sh/chart: traefik-28.3.0
+  name: cross-traefik
+  namespace: sn01
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: cross-traefik-sn01
+      app.kubernetes.io/name: traefik
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9100"
+        prometheus.io/scrape: "true"
+      creationTimestamp: null
+      labels:
+        app.kubernetes.io/instance: cross-traefik-sn01
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: traefik
+        helm.sh/chart: traefik-28.3.0
+    spec:
+      automountServiceAccountToken: true
+      containers:
+      - args:
+        - --configfile=/config/traefik.yaml
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        image: registry.local:5000/k8s/traefik:v3.0.2
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /ping
+            port: 9000
+            scheme: HTTP
+          initialDelaySeconds: 2
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 2
+        name: cross-traefik
+        ports:
+        - containerPort: 9100
+          name: metrics
+          protocol: TCP
+        - containerPort: 9000
+          hostPort: 9000
+          name: traefik
+          protocol: TCP
+        - containerPort: 8000
+          hostPort: 80
+          name: web
+          protocol: TCP
+        - containerPort: 8443
+          name: websecure
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 1
+          httpGet:
+            path: /ping
+            port: 9000
+            scheme: HTTP
+          initialDelaySeconds: 2
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 2
+        resources: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - mountPath: /data
+          name: data
+        - mountPath: /tmp
+          name: tmp
+        - mountPath: /config
+          name: config
+      dnsPolicy: ClusterFirst
+      nodeSelector:
+        test.com/edge-group: sn01
+      restartPolicy: Always
+      securityContext:
+        runAsGroup: 65532
+        runAsNonRoot: true
+        runAsUser: 65532
+      serviceAccount: cross-traefik
+      serviceAccountName: cross-traefik
+      volumes:
+      - emptyDir: {}
+        name: data
+      - emptyDir: {}
+        name: tmp
+      - configMap:
+          defaultMode: 420
+          name: traefik-config
+        name: config

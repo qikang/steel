@@ -1,0 +1,20 @@
+
+1. 部署 nfs 服务
+# mkdir -p /data/nfs_volumes
+# echo "/data/nfs_volumes *(rw,async,no_subtree_check,no_root_squash)" >> /etc/exports
+# exportfs -arv
+# systemctl restart nfs-kernel-server.service
+
+
+2. 解压chart包
+# tar -xf ../../../OpenSourceArchive/nfs-subdir-external-provisioner.2024-07-18.tar.gz
+
+3. 修改服务地址
+# vim nfs-subdir-external-provisioner/values.yaml
+
+nfs:
+  server: "192.168.170.143"
+  path: /data/nfs_volumes
+
+4. 安装 chart
+# helm -n kube-system install nfs-provisioner nfs-subdir-external-provisioner
