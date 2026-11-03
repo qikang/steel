@@ -1,0 +1,11 @@
+
+runlist:
+  - 01-etc-hosts/set-etc-hosts.yaml
+  - 02-set-local-repo/set-os-repo.yaml
+  - 03-set-ssh-keypair/install-keypair.yaml
+  - 04-install-chrony/install-chrony.yaml
+  - 05-set-os-kernel/set-kernel.yaml
+
+
+
+

@@ -1,0 +1,12 @@
+- name: copy 02-install-containerd
+  hosts: addworkers
+  copy:
+    src: install-k8s-yamls/master/02-install-containerd
+    dest: "{{ data_root }}/master/02-install-containerd"
+
+- name: install containerd
+  hosts: addworkers
+  shell:
+    cmd: /bin/bash install-containerd.sh
+    chdir: "{{ data_root }}/master/02-install-containerd"
+    bash: /bin/bash

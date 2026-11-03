@@ -1,0 +1,22 @@
+- name: copy 03-install-kubeadm_kubelet
+  hosts: addworkers
+  copy:
+    src: install-k8s-yamls/master/03-install-kubeadm_kubelet
+    dest: "{{ data_root }}/master/03-install-kubeadm_kubelet"
+
+- name: install kubelet kubeadm kubectl
+  hosts: addworkers
+  shell:
+    cmd: /bin/bash install-kubelet.sh
+    chdir: "{{ data_root }}/master/03-install-kubeadm_kubelet"
+    bash: /bin/bash
+
+- name: other workers join k8s cluster
+  hosts: addworkers
+  shell:
+    cmd: /bin/bash join-k8s-on-the-master1.sh worker
+    chdir: "{{ data_root }}/master/03-install-kubeadm_kubelet"
+    bash: /bin/bash
+  execution_mode: serial
+
+

@@ -1,0 +1,12 @@
+- name: copy 04-install-chrony
+  hosts: addworkers
+  copy:
+    src: install-k8s-yamls/common/04-install-chrony
+    dest: "{{ data_root }}/common/04-install-chrony"
+
+- name: install chrony on the all node.
+  hosts: addworkers
+  shell:
+    cmd: /bin/bash install-chrony.sh {{ hostname }}
+    chdir: "{{ data_root }}/common/04-install-chrony"
+    bash: /bin/bash

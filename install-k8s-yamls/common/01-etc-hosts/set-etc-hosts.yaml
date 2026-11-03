@@ -1,0 +1,31 @@
+- name: create data_root directory
+  hosts: allnode
+  shell:
+    cmd: "mkdir -p {{ data_root }}/common/01-etc-hosts"
+    bash: /bin/bash
+
+- name: copy 01-etc-hosts
+  hosts: allnode
+  copy:
+    src: install-k8s-yamls/common/01-etc-hosts
+    dest: "{{ data_root }}/common/01-etc-hosts"
+
+- name: run set-etc-hosts.sh
+  hosts: allnode
+  shell:
+    cmd: /bin/bash set-etc-hosts.sh
+    bash: /bin/bash
+    chdir: "{{ data_root }}/common/01-etc-hosts"
+
+- name: set timezone shanghai
+  hosts: allnode
+  shell:
+    cmd: timedatectl set-timezone Asia/Shanghai
+    bash: /bin/bash
+
+- name: set allnode hostname
+  hosts: allnode
+  shell:
+    cmd: hostnamectl set-hostname {{ hostname }}
+    bash: /bin/bash
+

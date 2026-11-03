@@ -1,0 +1,12 @@
+- name: copy 05-set-os-kernel
+  hosts: addworkers
+  copy:
+    src: install-k8s-yamls/common/05-set-os-kernel
+    dest: "{{ data_root }}/common/05-set-os-kernel"
+
+- name: set OS kernel
+  hosts: addworkers
+  shell:
+    cmd: /bin/bash set-kernel.sh
+    chdir: "{{ data_root }}/common/05-set-os-kernel"
+    bash: /bin/bash

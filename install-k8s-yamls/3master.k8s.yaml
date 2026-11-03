@@ -1,0 +1,86 @@
+hosts:
+  masters:
+    k8s_master1:
+      hostname: master1
+      ip: 192.168.170.48
+      user: root
+      password: your_password
+      plugin:
+        traefikServer: true
+    k8s_master2:
+      hostname: master2
+      ip: 192.168.170.49
+      user: root
+      password: your_password
+      plugin:
+        registryServer:
+          alias: registry.local
+        nfsServer: true
+    k8s_master3:
+      hostname: master3
+      ip: 192.168.170.47
+      user: root
+      password: your_password
+      plugin:
+        apiserverLB:
+          alias: apiserver.cluster.local
+        timeServer: true
+  workers:
+    k8s_worker1:
+      hostname: node1
+      ip: 192.168.170.22
+      user: root
+      password: your_password
+  #   k8s_worker2:
+  #     hostname: node2
+  #     ip: 192.168.170.42
+  #     user: root
+  #     password: your_password
+  #   k8s_worker3:
+  #     hostname: ip-192-168-1-1
+  #     ip: 192.168.170.1
+  #     user: root
+  #     password: your_password
+  addworkers: {}
+  # addworkers:
+  #   k8s_worker1:
+  #     hostname: node1
+  #     ip: 192.168.170.22
+  #     user: root
+  #     password: your_password
+  #   k8s_worker2:
+  #     hostname: node2
+  #     ip: 192.168.170.42
+  #     user: root
+  #     password: your_password
+  #   k8s_worker3:
+  #     hostname: ip-192-168-1-1
+  #     ip: 192.168.170.1
+  #     user: root
+  #     password: your_password
+vars:
+  pod_network_cidr: 10.244.0.0/16
+  service_cidr: 10.96.0.0/12
+  dns_domain: cluster.local
+  data_root: /data/install-k8s-remoteDirectory
+
+  # 设置网络堆栈协议
+  # ipv4 , ipv6 , dual-stack
+  k8s_network_stack: ipv4
+
+# os_arch 给shell执行脚本时,内置的环境变量。远程服务器执行uname -m,如果x86_64,os_arch=amd64,如果aarch64,os_arch=arm64。以远程服务器真实的cpu架构为准,取值情况如下:
+# os_arch="arm64"
+# os_arch="amd64"
+
+# master_node_number 给shell执行脚本时,内置的环境变量。steel工具只支持1、3、5个master节点，如果不是直接提示退出，如果是，则把masters组内节点的数量复制给 master_node_number。
+
+# runlist 是实际顺序执行yaml文件清单。
+runlist:
+  - test-env.yaml
+  - common/os-init.yaml
+  - master/master.yaml
+  - tools/tools.yaml
+
+
+
+

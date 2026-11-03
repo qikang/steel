@@ -1,0 +1,70 @@
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: InitConfiguration
+localAPIEndpoint:
+  advertiseAddress: fd20:d1a9:3c86:8111:12:0:1:2
+nodeRegistration:
+  kubeletExtraArgs:
+    cluster-dns: 2001:db8:1234:5678:8:3:0:a
+    node-ip: fd20:d1a9:3c86:8111:12:0:1:2
+---
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: ClusterConfiguration
+apiServer:
+  certSANs:
+  - ::1
+  - apiserver.cluster.local
+  - apiserver.cluster.local
+  - master1
+  - master2
+  - master3
+  - master
+  - node
+  - node1
+  - node2
+  - node3
+  - node4
+  - node5
+  - node6
+  - node7
+  - node8
+  - node9
+  - node10
+  - node11
+  - node12
+  - fd20:d1a9:3c86:8111:12:0:1:2
+  - fd20:d1a9:3c86:8111:12:0:1:3
+  extraArgs:
+    advertise-address: fd20:d1a9:3c86:8111:12:0:1:2
+    bind-address: '::'
+    etcd-servers: https://[fd20:d1a9:3c86:8111:12:0:1:2]:2379,https://[fd20:d1a9:3c86:8111:12:0:1:3]:2379,https://[fd20:d1a9:3c86:8111:12:0:1:4]:2379
+    service-cluster-ip-range: 2001:db8:1234:5678:8:3::/112
+controllerManager:
+  extraArgs:
+    allocate-node-cidrs: 'true'
+    bind-address: '::'
+    cluster-cidr: 2001:db8:1234:5678:8:2::/104
+    node-cidr-mask-size: '120'
+    service-cluster-ip-range: 2001:db8:1234:5678:8:3::/112
+    master: "fd20:d1a9:3c86:8111:12:0:1:2"
+networking:
+  dnsDomain: cluster.local
+  podSubnet: 2001:db8:1234:0::/56
+  serviceSubnet: 2001:db8:1234:5678:8:3::/112
+scheduler:
+  extraArgs:
+    bind-address: '::'
+    master: "fd20:d1a9:3c86:8111:12:0:1:2"
+kubernetesVersion: 1.29.5
+imageRepository: "registry.local:5000/k8s"
+---
+apiVersion: kubeproxy.config.k8s.io/v1alpha1
+kind: KubeProxyConfiguration
+bindAddress: "::"
+---
+apiVersion: kubelet.config.k8s.io/v1beta1
+cgroupDriver: cgroupfs
+clusterDNS:
+- 2001:db8:1234:5678:8:3:0:a
+healthzBindAddress: "::1"
+kind: KubeletConfiguration
+address: "::"
