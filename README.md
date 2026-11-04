@@ -27,13 +27,13 @@ go build -o steel .
 ### 测试连通性
 
 ```bash
-steel ping install-k8s-yamls/install-k8s.yaml
+steel ping install-k8s-yamls/3master_1node.k8s.yaml
 ```
 
 ### 执行安装
 
 ```bash
-steel apply install-k8s-yamls/install-k8s.yaml
+steel apply install-k8s-yamls/3master_1node.k8s.yaml
 ```
 
 ---
