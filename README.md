@@ -1,9 +1,16 @@
 # steel
-steel是一个安装k8s的工具,原理参考 Ansible 的 `copy` 和 `shell` 模块，开发的工具。`copy`本地shell脚本到远程主机,使用`shell`执行脚本，也可根据规则预置自定义环境变量。<br>
-steel 只是copy文件到远程服务器，然后在远程服务器执行shell脚本，所以只要操作系统环境支持k8s，理论上可以安装任意架构，任意系统的k8s。
+
+`steel` 是一个用于安装 k8s 的命令行工具，其设计原理参考 Ansible 的 `copy` 与 `shell` 模块。
+
+1. 通过 `copy` 将本地文件分发到远程主机
+2. 通过 `shell` 在远程主机上执行 Linux 命令或脚本
+3. 支持按规则预置自定义环境变量
+4. `steel` 仅依赖 Go 标准库，不引入任何第三方类库
+5. 理论上只要目标操作系统支持 k8s，即可完成对应架构的 k8s 部署
 
 ---
-## 编译steel
+
+## 编译 steel
 
 ```bash
 git clone https://github.com/qikang/steel.git
@@ -12,21 +19,23 @@ go build -o steel .
 ```
 
 ---
-## 安装示例
-- **[install-k8s-yamls](install-k8s-yamls/) 目录安装方法已验证。** <br>
 
-测试连通性
+## 安装示例
+
+- **[install-k8s-yamls](install-k8s-yamls/) 目录安装方法已验证。**
+
+### 测试连通性
+
 ```bash
 steel ping install-k8s-yamls/install-k8s.yaml
 ```
 
-执行安装
+### 执行安装
+
 ```bash
 steel apply install-k8s-yamls/install-k8s.yaml
 ```
 
-<br>
-
 ---
-[说明文档](docs/)
 
+## [说明文档](docs/)
