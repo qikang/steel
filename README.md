@@ -38,4 +38,4 @@ steel apply install-k8s-yamls/3master_1node.k8s.yaml
 
 ---
 
-## [说明文档](docs/)
+## [说明文档](docs/README.md)
